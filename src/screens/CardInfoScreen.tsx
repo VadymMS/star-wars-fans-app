@@ -51,24 +51,24 @@ export const CardInfoScreen = ({route}: CardInfoProps) => {
                   styles.extraInfoListContainer,
                   isLandscape && styles.extraInfoListContainerLandscape,
                 ]}>
-                {filmsId.length && (
+                {filmsId.length ? (
                   <ExtraInfoList
                     queryParam={QueryParamsEnums.films}
                     idArr={filmsId}
                   />
-                )}
-                {starshipsId.length && (
+                ) : null}
+                {starshipsId.length ? (
                   <ExtraInfoList
                     queryParam={QueryParamsEnums.starships}
                     idArr={starshipsId}
                   />
-                )}
-                {vehiclesId.length && (
+                ) : null}
+                {vehiclesId.length ? (
                   <ExtraInfoList
                     queryParam={QueryParamsEnums.vehicles}
                     idArr={vehiclesId}
                   />
-                )}
+                ) : null}
               </View>
             </>
           </ScrollView>

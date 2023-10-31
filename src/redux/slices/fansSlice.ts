@@ -92,6 +92,7 @@ export const fansSlice = createSlice({
         const {count, next, previous, results} = action.payload;
         const favoriteNamesFans: Array<string> = state.favoriteNameFans;
 
+        console.log(results);
         state.allFans = favoriteNamesFans.length
           ? results.map(fan =>
               favoriteNamesFans.includes(fan.name)

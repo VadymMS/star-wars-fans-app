@@ -1,33 +1,32 @@
-import React from 'react';
-import {StyleSheet, Text, View, useWindowDimensions} from 'react-native';
+import React, {useCallback} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import theme from '../../../themes/theme';
 import {CardListHeadersEnums} from '../../../types/enums/CardListHeadersEnums';
 import {FavouriteIcon, InputIcon} from '@gluestack-ui/themed';
 import {useLandscape} from '../../../hooks/useLandscape';
+import {useResponsiveSizes} from 'react-native-responsive-sizes';
+import {getCardWidth} from '../../../helpers/getCardWidth';
+import {hasDynamicIsland, hasNotch} from 'react-native-device-info';
 
 interface ICardListHeaderProps {
   titles: Array<CardListHeadersEnums>;
 }
 
 export const CardListHeader = ({titles}: ICardListHeaderProps) => {
-  const {width: screenWidth} = useWindowDimensions();
   const isLandscape = useLandscape();
+  const responsive = useResponsiveSizes();
+  const isExtraSpace = hasDynamicIsland() || hasNotch();
+
+  const getWidth = useCallback(
+    (index: number) =>
+      getCardWidth({index, isLandscape, responsive, isExtraSpace}),
+    [isLandscape, responsive, isExtraSpace],
+  );
+
   return (
     <View style={[styles.container, isLandscape && styles.containerLandscape]}>
       {titles.map((title, index) => {
-        const value =
-          index === 0
-            ? isLandscape
-              ? 12
-              : 6
-            : index === 1
-            ? isLandscape
-              ? 5
-              : 2.5
-            : isLandscape
-            ? 7
-            : 3.5;
-        const width = screenWidth / value;
+        const width = getWidth(index);
         return (
           <View
             style={[index !== 0 && styles.containerTitle, {width}]}

@@ -1,31 +1,42 @@
-import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
-  Platform,
-} from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet, Text, View, Platform} from 'react-native';
 import theme from '../../../themes/theme';
 import {ICounter} from '../../../types/appState';
 import {useLandscape} from '../../../hooks/useLandscape';
+import {useResponsiveSizes} from 'react-native-responsive-sizes';
+import {hasDynamicIsland, hasNotch} from 'react-native-device-info';
 
 interface ICounterProps {
   info: ICounter;
 }
 
 export const Counter = ({info}: ICounterProps) => {
-  const {height, width} = useWindowDimensions();
+  const responsive = useResponsiveSizes();
   const isLandscape = useLandscape();
-  const counterWidth = width / (isLandscape ? 4.6 : 3.5);
-  const counterHeight = height / (isLandscape ? 5.5 : 10);
+  const isExtraSpace = hasDynamicIsland() || hasNotch();
+  const isIos = Platform.OS === 'ios';
+
+  const counterWidth = useMemo(
+    () =>
+      isLandscape
+        ? (isExtraSpace && responsive.width(26)) || responsive.width(30)
+        : responsive.width(28),
+    [isLandscape, isExtraSpace, responsive],
+  );
+  const counterHeight = useMemo(
+    () =>
+      isLandscape
+        ? responsive.height(16)
+        : (!isExtraSpace && isIos && responsive.height(13)) ||
+          responsive.height(10),
+    [isLandscape, isExtraSpace, responsive, isIos],
+  );
 
   return (
     <View
       style={[
-        styles.counter,
+        {...styles.counter, width: counterWidth, height: counterHeight},
         isLandscape && styles.counterLandscape,
-        {width: counterWidth, height: counterHeight},
       ]}>
       <Text style={styles.counterNumber}>{info.count}</Text>
       <Text
@@ -76,7 +87,7 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.base,
     ...Platform.select({
       android: {
-        marginBottom: 6,
+        marginBottom: 1.5,
         marginLeft: 6,
       },
       ios: {

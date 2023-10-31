@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {RootStackParamList} from '../types/navigation';
 import theme from '../themes/theme';
@@ -28,9 +28,15 @@ export const CardInfoScreen = ({route}: CardInfoProps) => {
   const navigation = useNavigation();
   const isLandscape = useLandscape();
 
-  const filmsId = films.map(filmUrl => getId(filmUrl));
-  const starshipsId = starships.map(starshipUrl => getId(starshipUrl));
-  const vehiclesId = vehicles.map(vehicleUrl => getId(vehicleUrl));
+  const filmsId = useMemo(() => films.map(filmUrl => getId(filmUrl)), [films]);
+  const starshipsId = useMemo(
+    () => starships.map(starshipUrl => getId(starshipUrl)),
+    [starships],
+  );
+  const vehiclesId = useMemo(
+    () => vehicles.map(vehicleUrl => getId(vehicleUrl)),
+    [vehicles],
+  );
 
   const info = [eye_color, hair_color, height, mass, skin_color];
 
@@ -100,6 +106,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing[10],
   },
   title: {
+    textAlign: 'center',
     fontFamily: theme.fonts.interExtraBold,
     fontSize: theme.fontSize['4xl'],
     color: theme.colors.system.warning,

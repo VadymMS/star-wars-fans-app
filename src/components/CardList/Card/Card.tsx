@@ -1,5 +1,5 @@
-import React from 'react';
-import {StyleSheet, Text, View, useWindowDimensions} from 'react-native';
+import React, {useCallback, useMemo} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import {IFan} from '../../../types/appState';
 import theme from '../../../themes/theme';
 import {Button, ButtonIcon, FavouriteIcon} from '@gluestack-ui/themed';
@@ -14,6 +14,9 @@ import {
   useGetSpeciesQuery,
 } from '../../../redux/services/fansApi';
 import {useLandscape} from '../../../hooks/useLandscape';
+import {useResponsiveSizes} from 'react-native-responsive-sizes';
+import {getCardWidth} from '../../../helpers/getCardWidth';
+import {hasDynamicIsland, hasNotch} from 'react-native-device-info';
 
 interface ICardProps {
   info: IFan;
@@ -22,8 +25,9 @@ interface ICardProps {
 
 export const Card = ({info, onPress}: ICardProps) => {
   const navigation = useNavigation<ScreenNavigationProp>();
-  const {width: screenWidth} = useWindowDimensions();
   const isLandscape = useLandscape();
+  const responsive = useResponsiveSizes();
+  const isExtraSpace = hasDynamicIsland() || hasNotch();
 
   const {
     birth_year,
@@ -43,8 +47,8 @@ export const Card = ({info, onPress}: ICardProps) => {
     vehicles,
   } = info;
 
-  const homewoldId = getId(homeworldUrl);
-  const speciesdId = getId(speciesUrl);
+  const homewoldId = useMemo(() => getId(homeworldUrl), [homeworldUrl]);
+  const speciesdId = useMemo(() => getId(speciesUrl), [speciesUrl]);
 
   const {
     data: homeworld,
@@ -57,6 +61,12 @@ export const Card = ({info, onPress}: ICardProps) => {
     error: speciesError,
     isLoading: isLoadingSpecies,
   } = useGetSpeciesQuery(speciesdId);
+
+  const getWidth = useCallback(
+    (index: number) =>
+      getCardWidth({index, isLandscape, responsive, isExtraSpace}),
+    [isLandscape, responsive, isExtraSpace],
+  );
 
   if (homeworldError || speciesError) {
     return (
@@ -108,19 +118,7 @@ export const Card = ({info, onPress}: ICardProps) => {
       <View
         style={[styles.container, isLandscape && styles.containerLandscape]}>
         {infoArr.map((infoItem, index) => {
-          const value =
-            index === 0
-              ? isLandscape
-                ? 12
-                : 6
-              : index === 1
-              ? isLandscape
-                ? 5
-                : 2.5
-              : isLandscape
-              ? 7
-              : 3.5;
-          const width = screenWidth / value;
+          const width = getWidth(index);
           return (
             <View style={{width}} key={index.toString()}>
               {typeof infoItem === 'boolean' ? (

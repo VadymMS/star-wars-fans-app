@@ -75,26 +75,29 @@ export const MainScreen = () => {
     dispatch(clearFans());
   }, [dispatch]);
 
-  const toggleFavoriteHandler = (id: string) => {
-    dispatch(toggleFavorite(id));
-    dispatch(changeСounter(id));
-  };
+  const toggleFavoriteHandler = useCallback(
+    (id: string) => {
+      dispatch(toggleFavorite(id));
+      dispatch(changeСounter(id));
+    },
+    [dispatch],
+  );
 
-  const navigationPageHandler = (
-    direction: 'previous' | 'next',
-    page: Nullable<string>,
-  ) => {
-    const callback =
-      direction === 'previous'
-        ? (prev: number) => prev - 10
-        : (prev: number) => prev + 10;
-    if (page) {
-      dispatch(toggleLoading());
-      setCurrentPageUrl(page);
-      setStartNumberPage(callback);
-      setEndNumberPage(callback);
-    }
-  };
+  const navigationPageHandler = useCallback(
+    (direction: 'previous' | 'next', page: Nullable<string>) => {
+      const callback =
+        direction === 'previous'
+          ? (prev: number) => prev - 10
+          : (prev: number) => prev + 10;
+      if (page) {
+        dispatch(toggleLoading());
+        setCurrentPageUrl(page);
+        setStartNumberPage(callback);
+        setEndNumberPage(callback);
+      }
+    },
+    [dispatch, setCurrentPageUrl, setStartNumberPage, setEndNumberPage],
+  );
 
   const isHide = Platform.OS === 'ios' && isLandscape && isKeyboardShow;
 

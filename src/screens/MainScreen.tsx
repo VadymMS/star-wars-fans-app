@@ -33,13 +33,16 @@ import {
 } from '../redux/slices/fansSlice';
 import {Nullable} from '../types/utility';
 import {useLandscape} from '../hooks/useLandscape';
+import {PaginationEnums} from '../types/enums/PaginationEnums';
 
 export const MainScreen = () => {
   const [currentPageUrl, setCurrentPageUrl] = useState<string>(
     `${Urls.baseUrl}/${QueryParamsEnums.people}`,
   );
   const [startNumberPage, setStartNumberPage] = useState<number>(1);
-  const [endNumberPage, setEndNumberPage] = useState<number>(10);
+  const [endNumberPage, setEndNumberPage] = useState<number>(
+    PaginationEnums.step,
+  );
   const [inputValue, setInputValue] = useState<string>('');
   const [isKeyboardShow, setIsKeyboardShow] = useState(false);
 
@@ -87,8 +90,8 @@ export const MainScreen = () => {
     (direction: 'previous' | 'next', page: Nullable<string>) => {
       const callback =
         direction === 'previous'
-          ? (prev: number) => prev - 10
-          : (prev: number) => prev + 10;
+          ? (prev: number) => prev - PaginationEnums.step
+          : (prev: number) => prev + PaginationEnums.step;
       if (page) {
         dispatch(toggleLoading());
         setCurrentPageUrl(page);

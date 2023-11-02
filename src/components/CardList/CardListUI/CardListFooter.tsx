@@ -45,6 +45,7 @@ export const CardListFooter = ({
           isLandscape && styles.containerButtonsLandscape,
         ]}>
         <Button
+          disabled={previousPage ? false : true}
           onPress={previousPageHandler}
           marginRight={4}
           marginLeft={8}
@@ -59,6 +60,7 @@ export const CardListFooter = ({
           />
         </Button>
         <Button
+          disabled={nextPage ? false : true}
           onPress={nextPageHandler}
           marginRight={8}
           marginLeft={4}

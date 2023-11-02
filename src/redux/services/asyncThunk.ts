@@ -10,6 +10,7 @@ export const loadFans = createAsyncThunk(
   async (url: string): Promise<IResponse> => {
     const fans = await get(url);
 
+    console.log(fans);
     fans.data.results = fans.data.results.map((fan: IFan) => {
       const id = uuidv4().slice(0, 8);
       const favorite = false;

@@ -11,25 +11,21 @@ interface ICounterProps {
 }
 
 export const Counter = ({info}: ICounterProps) => {
-  const responsive = useResponsiveSizes();
+  const {width, height} = useResponsiveSizes();
   const isLandscape = useLandscape();
   const isExtraSpace = hasDynamicIsland() || hasNotch();
   const isIos = Platform.OS === 'ios';
 
   const counterWidth = useMemo(
-    () =>
-      isLandscape
-        ? (isExtraSpace && responsive.width(26)) || responsive.width(30)
-        : responsive.width(28),
-    [isLandscape, isExtraSpace, responsive],
+    () => (isLandscape ? (isExtraSpace && width(26)) || width(30) : width(28)),
+    [isLandscape, isExtraSpace, width],
   );
   const counterHeight = useMemo(
     () =>
       isLandscape
-        ? responsive.height(16)
-        : (!isExtraSpace && isIos && responsive.height(13)) ||
-          responsive.height(10),
-    [isLandscape, isExtraSpace, responsive, isIos],
+        ? height(16)
+        : (!isExtraSpace && isIos && height(13)) || height(10),
+    [isLandscape, isExtraSpace, isIos, height],
   );
 
   return (

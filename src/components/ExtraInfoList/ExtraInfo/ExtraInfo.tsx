@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {QueryParamsEnums} from '../../../types/enums/QueryEnums';
 import theme from '../../../themes/theme';
-import {ErrorComponent} from '../../Error/Error';
+import {ErrorComponent} from '../../ErrorComponent/ErrorComponent';
 import {Loader} from '../../Loader/Loader';
 import {
   useGetFilmsQuery,

@@ -1,11 +1,11 @@
 import React, {useCallback, useMemo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {IFan} from '../../../types/appState';
+import {IFanInfo, IFan} from '../../../types/appState';
 import theme from '../../../themes/theme';
 import {Button, ButtonIcon, FavouriteIcon} from '@gluestack-ui/themed';
 import {getId} from '../../../helpers/getId';
 import {Loader} from '../../Loader/Loader';
-import {ErrorComponent} from '../../Error/Error';
+import {ErrorComponent} from '../../ErrorComponent/ErrorComponent';
 import {TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {ScreenNavigationProp} from '../../../types/navigation';
@@ -16,18 +16,16 @@ import {
 import {useLandscape} from '../../../hooks/useLandscape';
 import {useResponsiveSizes} from 'react-native-responsive-sizes';
 import {getCardWidth} from '../../../helpers/getCardWidth';
-import {hasDynamicIsland, hasNotch} from 'react-native-device-info';
 
 interface ICardProps {
   info: IFan;
-  onPress: (name: string) => void;
+  onPress: (fanInfo: IFanInfo) => void;
 }
 
 export const Card = ({info, onPress}: ICardProps) => {
   const navigation = useNavigation<ScreenNavigationProp>();
   const isLandscape = useLandscape();
-  const responsive = useResponsiveSizes();
-  const isExtraSpace = hasDynamicIsland() || hasNotch();
+  const {width} = useResponsiveSizes();
 
   const {
     birth_year,
@@ -40,7 +38,6 @@ export const Card = ({info, onPress}: ICardProps) => {
     hair_color,
     height,
     mass,
-    id,
     skin_color,
     films,
     starships,
@@ -63,16 +60,15 @@ export const Card = ({info, onPress}: ICardProps) => {
   } = useGetSpeciesQuery(speciesdId);
 
   const getWidth = useCallback(
-    (index: number) =>
-      getCardWidth({index, isLandscape, responsive, isExtraSpace}),
-    [isLandscape, responsive, isExtraSpace],
+    (index: number) => getCardWidth({index, isLandscape, width}),
+    [isLandscape, width],
   );
 
   if (homeworldError || speciesError) {
     return (
       <ErrorComponent
         title="Something went wrong!"
-        style={[styles.container, isLandscape && styles.heightLandscape]}
+        style={[styles.container, isLandscape && styles.containerLandscape]}
         textStyle={[styles.textStyle, styles.textErrorStyle]}
       />
     );
@@ -84,7 +80,7 @@ export const Card = ({info, onPress}: ICardProps) => {
         style={[
           styles.container,
           styles.loaderStyle,
-          isLandscape && styles.heightLandscape,
+          isLandscape && styles.containerLandscape,
         ]}
         size={isLandscape ? 'small' : 'large'}
       />
@@ -116,14 +112,19 @@ export const Card = ({info, onPress}: ICardProps) => {
         })
       }>
       <View
-        style={[styles.container, isLandscape && styles.containerLandscape]}>
+        style={[
+          styles.container,
+          isLandscape && {
+            ...styles.containerLandscape,
+            ...styles.cardWidthLandscape,
+          },
+        ]}>
         {infoArr.map((infoItem, index) => {
-          const width = getWidth(index);
           return (
-            <View style={{width}} key={index.toString()}>
+            <View style={{width: getWidth(index)}} key={index.toString()}>
               {typeof infoItem === 'boolean' ? (
                 <Button
-                  onPress={() => onPress(id)}
+                  onPress={() => onPress({name, type: gender, favorite})}
                   marginLeft={8}
                   borderRadius="$full"
                   size="sm"
@@ -159,9 +160,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
   },
   containerLandscape: {
-    width: '50%',
     maxHeight: 42,
     minHeight: 42,
+  },
+  cardWidthLandscape: {
+    width: '50%',
   },
   textStyle: {
     lineHeight: 13,
@@ -173,10 +176,6 @@ const styles = StyleSheet.create({
   },
   loaderStyle: {
     justifyContent: 'center',
-  },
-  heightLandscape: {
-    maxHeight: 42,
-    minHeight: 42,
   },
   textErrorStyle: {
     color: theme.colors.red,

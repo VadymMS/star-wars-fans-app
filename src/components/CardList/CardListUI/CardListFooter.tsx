@@ -7,29 +7,33 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@gluestack-ui/themed';
-import {Nullable} from '../../../types/utility';
 import {useLandscape} from '../../../hooks/useLandscape';
+import {useAppSelector} from '../../../hooks/useStoreHooks';
+import {
+  selectCountPages,
+  selectNextPage,
+  selectPreviousPage,
+} from '../../../redux/services/selects';
+import {Nullable} from '../../../types/utility';
 
 interface ICardListFooterProps {
-  countPages: number;
-  previousPageHandler: () => void;
-  nextPageHandler: () => void;
-  previousPage: Nullable<string>;
-  nextPage: Nullable<string>;
   startNumberPage: number;
   endNumberPage: number;
+  navigationPageHandler: (
+    direction: 'previous' | 'next',
+    page: Nullable<string>,
+  ) => void;
 }
 
 export const CardListFooter = ({
-  countPages,
-  previousPageHandler,
-  nextPageHandler,
-  previousPage,
-  nextPage,
   startNumberPage,
   endNumberPage,
+  navigationPageHandler,
 }: ICardListFooterProps) => {
   const isLandscape = useLandscape();
+  const previousPage = useAppSelector(selectPreviousPage);
+  const nextPage = useAppSelector(selectNextPage);
+  const countPages = useAppSelector(selectCountPages);
   return (
     <View style={[styles.container, isLandscape && styles.containerLandscape]}>
       <View style={styles.containerPages}>
@@ -45,8 +49,8 @@ export const CardListFooter = ({
           isLandscape && styles.containerButtonsLandscape,
         ]}>
         <Button
-          disabled={previousPage ? false : true}
-          onPress={previousPageHandler}
+          disabled={!previousPage}
+          onPress={() => navigationPageHandler('previous', previousPage)}
           marginRight={4}
           marginLeft={8}
           borderRadius="$full"
@@ -60,8 +64,8 @@ export const CardListFooter = ({
           />
         </Button>
         <Button
-          disabled={nextPage ? false : true}
-          onPress={nextPageHandler}
+          disabled={!nextPage}
+          onPress={() => navigationPageHandler('next', nextPage)}
           marginRight={8}
           marginLeft={4}
           borderRadius="$full"

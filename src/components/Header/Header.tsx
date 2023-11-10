@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   title: {
+    textTransform: 'capitalize',
     fontFamily: theme.fonts.interExtraLight,
     fontSize: theme.fontSize['3xl'],
     color: theme.colors.black,

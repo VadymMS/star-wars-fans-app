@@ -11,11 +11,8 @@ import {
 import theme from '../themes/theme';
 import {
   selectAllFans,
-  selectCountPages,
   selectCounters,
   selectLoading,
-  selectNextPage,
-  selectPreviousPage,
 } from '../redux/services/selects';
 import {useAppDispatch, useAppSelector} from '../hooks/useStoreHooks';
 import {CardList} from '../components/CardList/CardList';
@@ -28,12 +25,13 @@ import {loadFans} from '../redux/services/asyncThunk';
 import {
   clearFans,
   toggleFavorite,
-  changeСounter,
   toggleLoading,
 } from '../redux/slices/fansSlice';
 import {Nullable} from '../types/utility';
 import {useLandscape} from '../hooks/useLandscape';
 import {PaginationEnums} from '../types/enums/PaginationEnums';
+import storageService from '../Services/storageService';
+import {IFanInfo} from '../types/appState';
 
 export const MainScreen = () => {
   const [currentPageUrl, setCurrentPageUrl] = useState<string>(
@@ -44,14 +42,11 @@ export const MainScreen = () => {
     PaginationEnums.step,
   );
   const [inputValue, setInputValue] = useState<string>('');
-  const [isKeyboardShow, setIsKeyboardShow] = useState(false);
+  const [isKeyboardShow, setIsKeyboardShow] = useState<boolean>(false);
 
-  const allFans = useAppSelector(selectAllFans);
+  const fans = useAppSelector(selectAllFans);
   const loading = useAppSelector(selectLoading);
   const counters = useAppSelector(selectCounters);
-  const countPages = useAppSelector(selectCountPages);
-  const previousPage = useAppSelector(selectPreviousPage);
-  const nextPage = useAppSelector(selectNextPage);
   const dispatch = useAppDispatch();
   const isLandscape = useLandscape();
 
@@ -76,12 +71,13 @@ export const MainScreen = () => {
 
   const clearFansHandler = useCallback(() => {
     dispatch(clearFans());
+    storageService.clearStorage();
   }, [dispatch]);
 
   const toggleFavoriteHandler = useCallback(
-    (id: string) => {
-      dispatch(toggleFavorite(id));
-      dispatch(changeСounter(id));
+    (fanInfo: IFanInfo) => {
+      dispatch(toggleFavorite(fanInfo));
+      storageService.updateStorage(fanInfo);
     },
     [dispatch],
   );
@@ -114,31 +110,20 @@ export const MainScreen = () => {
           <SafeAreaView style={styles.safeAreaViewStyle}>
             <View style={styles.container}>
               {!isHide && <Header title="Fans" onPress={clearFansHandler} />}
-              {!isHide && <CounterList counters={counters} />}
               {loading ? (
-                <Loader
-                  style={[
-                    styles.loaderStyle,
-                    isLandscape && styles.loaderStyleLandscape,
-                  ]}
-                />
+                <Loader style={styles.loaderStyle} />
               ) : (
-                <CardList
-                  allFans={filterElements(allFans, inputValue)}
-                  onChangeText={setInputValue}
-                  onPress={toggleFavoriteHandler}
-                  countPages={countPages}
-                  previousPageHandler={() =>
-                    navigationPageHandler('previous', previousPage)
-                  }
-                  nextPageHandler={() =>
-                    navigationPageHandler('next', nextPage)
-                  }
-                  previousPage={previousPage}
-                  nextPage={nextPage}
-                  startNumberPage={startNumberPage}
-                  endNumberPage={endNumberPage}
-                />
+                <>
+                  {!isHide && <CounterList counters={counters} />}
+                  <CardList
+                    allFans={filterElements(fans, inputValue)}
+                    onChangeText={setInputValue}
+                    onPress={toggleFavoriteHandler}
+                    navigationPageHandler={navigationPageHandler}
+                    startNumberPage={startNumberPage}
+                    endNumberPage={endNumberPage}
+                  />
+                </>
               )}
             </View>
           </SafeAreaView>
@@ -169,11 +154,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing[16],
   },
   loaderStyle: {
-    flex: 10,
-    justifyContent: 'flex-start',
-  },
-  loaderStyleLandscape: {
-    marginTop: 10,
-    flex: 8,
+    flex: 13,
+    justifyContent: 'center',
   },
 });

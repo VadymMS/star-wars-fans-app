@@ -1,27 +1,22 @@
-import {responsiveType} from 'react-native-responsive-sizes';
+import {hasDynamicIsland, hasNotch} from 'react-native-device-info';
 
 interface getCardWidthProps {
   index: number;
   isLandscape: boolean;
-  isExtraSpace: boolean;
-  responsive: responsiveType;
+  width: (num: number) => number;
 }
 
 export const getCardWidth = ({
   index,
   isLandscape,
-  responsive,
-  isExtraSpace,
+  width,
 }: getCardWidthProps): number => {
-  return index === 0
-    ? isLandscape
-      ? (isExtraSpace && responsive.width(8)) || responsive.width(10)
-      : responsive.width(20)
-    : index === 1
-    ? isLandscape
-      ? (isExtraSpace && responsive.width(18)) || responsive.width(20)
-      : responsive.width(40)
-    : isLandscape
-    ? (isExtraSpace && responsive.width(13)) || responsive.width(15)
-    : responsive.width(30);
+  const isExtraSpace = hasDynamicIsland() || hasNotch();
+  if (index === 0) {
+    return isLandscape ? (isExtraSpace ? width(8) : width(10)) : width(20);
+  }
+  if (index === 1) {
+    return isLandscape ? (isExtraSpace ? width(18) : width(20)) : width(40);
+  }
+  return isLandscape ? (isExtraSpace ? width(13) : width(15)) : width(30);
 };

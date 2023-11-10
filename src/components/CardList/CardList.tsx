@@ -1,7 +1,7 @@
 import React from 'react';
 import {FlatList, ScrollView, StyleSheet, View} from 'react-native';
 import {Card} from './Card/Card';
-import {IFan} from '../../types/appState';
+import {IFanInfo, IFan} from '../../types/appState';
 import theme from '../../themes/theme';
 import {CardListHeader} from './CardListUI/CardListHeader';
 import {SearchBar} from '../SearchBar/SearchBar';
@@ -9,18 +9,17 @@ import {CardListEmpty} from './CardListUI/CardListEmpty';
 import {CardListSeparator} from './CardListUI/CardListSeparator';
 import {CardListHeadersEnums} from '../../types/enums/CardListHeadersEnums';
 import {CardListFooter} from './CardListUI/CardListFooter';
-import {Nullable} from '../../types/utility';
 import {useLandscape} from '../../hooks/useLandscape';
+import {Nullable} from '../../types/utility';
 
 interface ICardListProps {
   allFans: Array<IFan>;
-  onPress: (id: string) => void;
+  onPress: (fanInfo: IFanInfo) => void;
   onChangeText: (value: string) => void;
-  countPages: number;
-  previousPageHandler: () => void;
-  nextPageHandler: () => void;
-  nextPage: Nullable<string>;
-  previousPage: Nullable<string>;
+  navigationPageHandler: (
+    direction: 'previous' | 'next',
+    page: Nullable<string>,
+  ) => void;
   startNumberPage: number;
   endNumberPage: number;
 }
@@ -29,30 +28,22 @@ export const CardList = ({
   allFans,
   onPress,
   onChangeText,
-  countPages,
-  previousPageHandler,
-  nextPageHandler,
-  nextPage,
-  previousPage,
+  navigationPageHandler,
   startNumberPage,
   endNumberPage,
 }: ICardListProps) => {
   const cardListHeaders = Object.values(CardListHeadersEnums);
   const isLandscape = useLandscape();
 
+  const handleHeader = () => <CardListHeader titles={cardListHeaders} />;
+  const handleEmpty = () => <CardListEmpty title="No results found." />;
   const handleRenderItem = ({item}: {item: IFan}) => (
     <Card info={item} onPress={onPress} />
   );
-  const handleHeader = () => <CardListHeader titles={cardListHeaders} />;
-  const handleEmpty = () => <CardListEmpty title="No results found." />;
   const handleSeparator = () => <CardListSeparator color={theme.colors.grey} />;
   const handleFooter = () => (
     <CardListFooter
-      countPages={countPages}
-      previousPageHandler={previousPageHandler}
-      nextPageHandler={nextPageHandler}
-      previousPage={previousPage}
-      nextPage={nextPage}
+      navigationPageHandler={navigationPageHandler}
       startNumberPage={startNumberPage}
       endNumberPage={endNumberPage}
     />

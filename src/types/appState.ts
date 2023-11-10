@@ -1,6 +1,11 @@
 import {CountersTypeEnums} from './enums/CountresTypeEnums';
 import {Nullable} from './utility';
 
+export interface IFanInfo {
+  name: string;
+  favorite: boolean;
+  type: string;
+}
 export interface ICardInfo {
   name: string;
   eye_color: string;
@@ -35,7 +40,6 @@ export interface ICounter {
 
 export interface IFansState {
   allFans: Array<IFan> | [];
-  favoriteNameFans: Array<string> | [];
   loading: boolean;
   countPages: number;
   previousPage: Nullable<string>;

@@ -6,7 +6,6 @@ import {FavouriteIcon, InputIcon} from '@gluestack-ui/themed';
 import {useLandscape} from '../../../hooks/useLandscape';
 import {useResponsiveSizes} from 'react-native-responsive-sizes';
 import {getCardWidth} from '../../../helpers/getCardWidth';
-import {hasDynamicIsland, hasNotch} from 'react-native-device-info';
 
 interface ICardListHeaderProps {
   titles: Array<CardListHeadersEnums>;
@@ -14,22 +13,22 @@ interface ICardListHeaderProps {
 
 export const CardListHeader = ({titles}: ICardListHeaderProps) => {
   const isLandscape = useLandscape();
-  const responsive = useResponsiveSizes();
-  const isExtraSpace = hasDynamicIsland() || hasNotch();
+  const {width} = useResponsiveSizes();
 
   const getWidth = useCallback(
-    (index: number) =>
-      getCardWidth({index, isLandscape, responsive, isExtraSpace}),
-    [isLandscape, responsive, isExtraSpace],
+    (index: number) => getCardWidth({index, isLandscape, width}),
+    [isLandscape, width],
   );
 
   return (
     <View style={[styles.container, isLandscape && styles.containerLandscape]}>
       {titles.map((title, index) => {
-        const width = getWidth(index);
         return (
           <View
-            style={[index !== 0 && styles.containerTitle, {width}]}
+            style={[
+              index !== 0 && styles.containerTitle,
+              {width: getWidth(index)},
+            ]}
             key={index.toString()}>
             {title === CardListHeadersEnums.favorite ? (
               <InputIcon

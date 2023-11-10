@@ -44,7 +44,7 @@ export const MainScreen = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [isKeyboardShow, setIsKeyboardShow] = useState<boolean>(false);
 
-  const fans = useAppSelector(selectAllFans);
+  const allFans = useAppSelector(selectAllFans);
   const loading = useAppSelector(selectLoading);
   const counters = useAppSelector(selectCounters);
   const dispatch = useAppDispatch();
@@ -116,7 +116,7 @@ export const MainScreen = () => {
                 <>
                   {!isHide && <CounterList counters={counters} />}
                   <CardList
-                    allFans={filterElements(fans, inputValue)}
+                    allFans={filterElements(allFans, inputValue)}
                     onChangeText={setInputValue}
                     onPress={toggleFavoriteHandler}
                     navigationPageHandler={navigationPageHandler}

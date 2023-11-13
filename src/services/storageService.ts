@@ -6,12 +6,12 @@ import storage from './storage';
 
 const getFavoriteFans = async (): Promise<FavoriteFansType[]> => {
   const favoriteFansString = await storage.getItem(StorageKeys.favoriteFans);
-  return (favoriteFansString && JSON.parse(favoriteFansString)) || [];
+  return favoriteFansString || [];
 };
 
 const getCounters = async (): Promise<CounterType[]> => {
   const countersString = await storage.getItem(StorageKeys.counters);
-  return (countersString && JSON.parse(countersString)) || [];
+  return countersString || [];
 };
 
 const clearStorage = async () => {
@@ -52,8 +52,8 @@ const updateStorage = async ({name, type, favorite}: IFanInfo) => {
       })
     : [...counters, {type: counterType, count: 1}];
 
-  storage.setItem(StorageKeys.favoriteFans, JSON.stringify(updateFans));
-  storage.setItem(StorageKeys.counters, JSON.stringify(updateCounters));
+  storage.setItem(StorageKeys.favoriteFans, updateFans);
+  storage.setItem(StorageKeys.counters, updateCounters);
 };
 
 const storageService = {

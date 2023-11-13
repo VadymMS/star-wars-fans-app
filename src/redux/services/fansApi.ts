@@ -1,9 +1,10 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import {QueryParamsEnums} from '../../types/enums/QueryEnums';
+import {API_URL} from '@env';
 
 export const fansApi = createApi({
   reducerPath: 'fansApi',
-  baseQuery: fetchBaseQuery({baseUrl: 'https://swapi.dev/api/'}),
+  baseQuery: fetchBaseQuery({baseUrl: API_URL}),
   endpoints: builder => ({
     getPeople: builder.query({
       query: (id?: string) => `${QueryParamsEnums.people}/${id}`,

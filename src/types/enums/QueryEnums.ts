@@ -6,7 +6,3 @@ export enum QueryParamsEnums {
   starships = 'starships',
   vehicles = 'vehicles',
 }
-
-export enum Urls {
-  baseUrl = 'https://swapi.dev/api/',
-}

@@ -20,7 +20,7 @@ import {CounterList} from '../components/CounterList/CounterList';
 import {Header} from '../components/Header/Header';
 import {Loader} from '../components/Loader/Loader';
 import {filterElements} from '../helpers/filterElements';
-import {QueryParamsEnums, Urls} from '../types/enums/QueryEnums';
+import {QueryParamsEnums} from '../types/enums/QueryEnums';
 import {loadFans} from '../redux/services/asyncThunk';
 import {
   clearFans,
@@ -32,10 +32,11 @@ import {useLandscape} from '../hooks/useLandscape';
 import {PaginationEnums} from '../types/enums/PaginationEnums';
 import storageService from '../Services/storageService';
 import {IFanInfo} from '../types/appState';
+import {API_URL} from '@env';
 
 export const MainScreen = () => {
   const [currentPageUrl, setCurrentPageUrl] = useState<string>(
-    `${Urls.baseUrl}/${QueryParamsEnums.people}`,
+    `${API_URL}/${QueryParamsEnums.people}`,
   );
   const [startNumberPage, setStartNumberPage] = useState<number>(1);
   const [endNumberPage, setEndNumberPage] = useState<number>(

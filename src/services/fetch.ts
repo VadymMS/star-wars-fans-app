@@ -18,12 +18,16 @@ export const get = async (
   destination: string,
   optionalHeaders?: {[key: string]: string},
 ): Promise<any> => {
-  const headers = getHeaders();
-  const requestHeaders = {...headers, ...optionalHeaders};
+  try {
+    const headers = getHeaders();
+    const requestHeaders = {...headers, ...optionalHeaders};
 
-  const result = await axios.get(destination, {
-    headers: requestHeaders,
-  });
+    const result = await axios.get(destination, {
+      headers: requestHeaders,
+    });
 
-  return result;
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
 };

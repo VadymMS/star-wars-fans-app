@@ -12,6 +12,14 @@ type FontWeight =
   | 'bold'
   | undefined;
 
+const commonColors = {
+  commonYellow: '#FFC107',
+  commonBlack: '#000000',
+  commonWhite: '#FFFFFF',
+  commonGrey: '#aaaaaa',
+  commonRed: 'rgba(255, 42, 36, 0.78)',
+};
+
 export default {
   fontSize: {
     xxs: 8,
@@ -35,18 +43,23 @@ export default {
     interMedium: 'Inter-Medium', // 500
   },
   colors: {
-    transparent: 'transparent',
-    white: 'rgb(255, 255, 255)',
-    grey: '#f6f5f3',
-    red: 'rgba(255, 42, 36, 0.78)',
-    black: 'rgba(0, 0, 0, 0.87)',
-    system: {
-      success: '#62e685',
-      info: '#1BC6DF',
-      error: '#F65130',
-      warning: '#F1BA4E',
-      disabled: '#aaaaaa',
-      successDisabled: '#b9f3c8',
+    light: {
+      sideColor: '#f6f5f3',
+      textColor: 'rgba(0, 0, 0, 0.87)',
+      borderColor: '#f6f5f3',
+      black: '#000000',
+      white: '#FFFFFF',
+      grey: '#f6f5f3',
+      ...commonColors,
+    },
+    dark: {
+      sideColor: '#FFC107',
+      textColor: '#FFC107',
+      borderColor: '##282828',
+      black: '#FFFFFF',
+      white: '#282828',
+      grey: 'rgba(0, 0, 0, 0.87)',
+      ...commonColors,
     },
   },
   borderWidth: {

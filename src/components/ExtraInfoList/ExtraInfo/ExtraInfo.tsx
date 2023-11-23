@@ -1,5 +1,5 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useMemo} from 'react';
+import {Text, View} from 'react-native';
 import {QueryParamsEnums} from '../../../types/enums/QueryEnums';
 import theme from '../../../themes/theme';
 import {ErrorComponent} from '../../ErrorComponent/ErrorComponent';
@@ -11,6 +11,9 @@ import {
   useGetVehiclesQuery,
 } from '../../../redux/services/fansApi';
 import {useLandscape} from '../../../hooks/useLandscape';
+import {useAppSelector} from '../../../hooks/useStoreHooks';
+import {selectDarkTheme} from '../../../redux/services/selects';
+import dynamicStyles from './styles';
 
 interface IExtraInfo {
   queryParam: string;
@@ -18,7 +21,10 @@ interface IExtraInfo {
 }
 
 export const ExtraInfo = ({queryParam, id}: IExtraInfo) => {
+  const isDark = useAppSelector(selectDarkTheme);
   const isLandscape = useLandscape();
+  const themeValue = isDark ? 'dark' : 'light';
+
   let getQuery;
 
   switch (queryParam) {
@@ -37,12 +43,16 @@ export const ExtraInfo = ({queryParam, id}: IExtraInfo) => {
   }
 
   const {data, error, isLoading} = getQuery(id);
+  const styles = useMemo(
+    () => dynamicStyles({isDark, isLandscape}),
+    [isDark, isLandscape],
+  );
 
   if (error) {
     return (
       <ErrorComponent
         title="Something went wrong!"
-        style={[styles.container, isLandscape && styles.containerLandscape]}
+        style={styles.container}
         textStyle={styles.textErrorStyle}
       />
     );
@@ -51,9 +61,9 @@ export const ExtraInfo = ({queryParam, id}: IExtraInfo) => {
   if (isLoading) {
     return (
       <Loader
-        color={theme.colors.system.warning}
-        style={[styles.container, isLandscape && styles.containerLandscape]}
-        size={isLandscape ? 'small' : 'large'}
+        color={theme.colors[themeValue]?.textColor}
+        style={styles.container}
+        size="small"
       />
     );
   }
@@ -61,32 +71,8 @@ export const ExtraInfo = ({queryParam, id}: IExtraInfo) => {
   const title = queryParam === QueryParamsEnums.films ? data.title : data.name;
 
   return (
-    <View style={[styles.container, isLandscape && styles.containerLandscape]}>
+    <View style={styles.container}>
       <Text style={styles.textStyle}>{title || ''}</Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    maxHeight: 30,
-    minHeight: 30,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.black,
-    marginTop: 5,
-    flexDirection: 'column',
-  },
-  containerLandscape: {
-    maxHeight: 20,
-    minHeight: 20,
-  },
-  textStyle: {
-    color: theme.colors.system.warning,
-    fontFamily: theme.fonts.interLight,
-  },
-  textErrorStyle: {
-    color: theme.colors.red,
-  },
-});

@@ -1,31 +1,25 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import theme from '../../themes/theme';
+import React, {useMemo} from 'react';
+import {Text, View} from 'react-native';
 import {ExtraInfo} from './ExtraInfo/ExtraInfo';
+import {useAppSelector} from '../../hooks/useStoreHooks';
+import {selectDarkTheme} from '../../redux/services/selects';
+import dynamicStyles from './styles';
 
 interface IExtraInfoList {
   queryParam: string;
   idArr: Array<string>;
 }
 
-export const ExtraInfoList = ({queryParam, idArr}: IExtraInfoList) => (
-  <View style={styles.container}>
-    <Text style={styles.title}>{queryParam}</Text>
-    {idArr.map((id, index) => (
-      <ExtraInfo queryParam={queryParam} id={id} key={index.toString()} />
-    ))}
-  </View>
-);
+export const ExtraInfoList = ({queryParam, idArr}: IExtraInfoList) => {
+  const isDark = useAppSelector(selectDarkTheme);
+  const styles = useMemo(() => dynamicStyles({isDark}), [isDark]);
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: theme.colors.black,
-    marginVertical: 10,
-  },
-  title: {
-    textTransform: 'capitalize',
-    color: theme.colors.system.warning,
-    fontFamily: theme.fonts.interBold,
-    fontSize: theme.fontSize['3xl'],
-  },
-});
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{queryParam}</Text>
+      {idArr.map((id, index) => (
+        <ExtraInfo queryParam={queryParam} id={id} key={index.toString()} />
+      ))}
+    </View>
+  );
+};

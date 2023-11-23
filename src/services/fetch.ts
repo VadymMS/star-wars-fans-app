@@ -21,7 +21,6 @@ export const get = async (
   try {
     const headers = getHeaders();
     const requestHeaders = {...headers, ...optionalHeaders};
-
     const result = await axios.get(destination, {
       headers: requestHeaders,
     });

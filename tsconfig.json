@@ -1,4 +1,10 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
-  "compilerOptions": {"typeRoots": ["./src/types"]}
+  "compilerOptions": {"typeRoots": ["./src/types"]},
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ]
 }

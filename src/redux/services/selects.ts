@@ -6,3 +6,4 @@ export const selectCountPages = (state: IStore) => state.fans.countPages;
 export const selectPreviousPage = (state: IStore) => state.fans.previousPage;
 export const selectNextPage = (state: IStore) => state.fans.nextPage;
 export const selectLoading = (state: IStore) => state.fans.loading;
+export const selectDarkTheme = (state: IStore) => state.theme.isDarkTheme;

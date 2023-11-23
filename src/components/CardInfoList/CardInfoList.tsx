@@ -1,9 +1,9 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useMemo} from 'react';
+import {View} from 'react-native';
 import {CardInfoListHeadersEnums} from '../../types/enums/CardInfoListHeadersEnums';
-import {CardInfoItem} from './CardInfoItem/CardInfoItem';
-import theme from '../../themes/theme';
+import {CardInfo} from './CardInfo/CardInfo';
 import {useLandscape} from '../../hooks/useLandscape';
+import dynamicStyles from './styles';
 
 interface ICardInfoList {
   info: Array<string>;
@@ -12,34 +12,20 @@ interface ICardInfoList {
 export const CardInfoList = ({info}: ICardInfoList) => {
   const cardInfoHeaders = Object.values(CardInfoListHeadersEnums);
   const isLandscape = useLandscape();
+  const styles = useMemo(() => dynamicStyles({isLandscape}), [isLandscape]);
+
   return (
-    <View style={[styles.container, isLandscape && styles.containerLandscape]}>
+    <View style={styles.container}>
       <View style={styles.containerInfo}>
         {cardInfoHeaders.map((title, index) => (
-          <CardInfoItem value={title} key={index.toString()} />
+          <CardInfo value={title} key={index.toString()} />
         ))}
       </View>
       <View style={styles.containerInfo}>
         {info.map((infoItem, index) => (
-          <CardInfoItem value={infoItem} key={index.toString()} />
+          <CardInfo value={infoItem} key={index.toString()} />
         ))}
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: theme.spacing[16],
-    marginBottom: 15,
-  },
-  containerLandscape: {
-    marginBottom: 0,
-  },
-  containerInfo: {
-    width: '50%',
-  },
-});

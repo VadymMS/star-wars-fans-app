@@ -1,23 +1,22 @@
-import React from 'react';
-import {FlatList, ScrollView, StyleSheet, View} from 'react-native';
-import {Card} from './Card/Card';
+import React, {useMemo} from 'react';
+import {FlatList, ScrollView, View} from 'react-native';
 import {IFanInfo, IFan} from '../../types/appState';
-import theme from '../../themes/theme';
-import {CardListHeader} from './CardListUI/CardListHeader';
 import {SearchBar} from '../SearchBar/SearchBar';
-import {CardListEmpty} from './CardListUI/CardListEmpty';
-import {CardListSeparator} from './CardListUI/CardListSeparator';
 import {CardListHeadersEnums} from '../../types/enums/CardListHeadersEnums';
-import {CardListFooter} from './CardListUI/CardListFooter';
 import {useLandscape} from '../../hooks/useLandscape';
 import {Nullable} from '../../types/utility';
+import {useAppSelector} from '../../hooks/useStoreHooks';
+import {selectDarkTheme} from '../../redux/services/selects';
+import dynamicStyles from './styles';
+import {NavigationType} from '../../types/navigation';
+import {Card, Empty, Footer, Header, Separator} from './CardListUI';
 
 interface ICardListProps {
   allFans: Array<IFan>;
   onPress: (fanInfo: IFanInfo) => void;
   onChangeText: (value: string) => void;
   navigationPageHandler: (
-    direction: 'previous' | 'next',
+    direction: NavigationType,
     page: Nullable<string>,
   ) => void;
   startNumberPage: number;
@@ -32,25 +31,31 @@ export const CardList = ({
   startNumberPage,
   endNumberPage,
 }: ICardListProps) => {
+  const isDark = useAppSelector(selectDarkTheme);
   const cardListHeaders = Object.values(CardListHeadersEnums);
   const isLandscape = useLandscape();
 
-  const handleHeader = () => <CardListHeader titles={cardListHeaders} />;
-  const handleEmpty = () => <CardListEmpty title="No results found." />;
+  const handleHeader = () => <Header titles={cardListHeaders} />;
   const handleRenderItem = ({item}: {item: IFan}) => (
     <Card info={item} onPress={onPress} />
   );
-  const handleSeparator = () => <CardListSeparator color={theme.colors.grey} />;
   const handleFooter = () => (
-    <CardListFooter
+    <Footer
       navigationPageHandler={navigationPageHandler}
       startNumberPage={startNumberPage}
       endNumberPage={endNumberPage}
     />
   );
+  const handleEmpty = () => <Empty title="No results found." />;
+  const handleSeparator = () => <Separator />;
+
+  const styles = useMemo(
+    () => dynamicStyles({isDark, isLandscape}),
+    [isDark, isLandscape],
+  );
 
   return (
-    <View style={[styles.container, isLandscape && styles.containerLandscape]}>
+    <View style={styles.container}>
       <SearchBar onChangeText={onChangeText} />
       <View style={styles.listContainer}>
         <ScrollView horizontal={true} showsVerticalScrollIndicator={false}>
@@ -68,31 +73,3 @@ export const CardList = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 10,
-    padding: theme.spacing[16],
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: theme.colors.grey,
-    backgroundColor: theme.colors.white,
-    width: '100%',
-    justifyContent: 'flex-start',
-    shadowColor: theme.colors.black,
-    shadowRadius: 1,
-    shadowOpacity: 0.3,
-    shadowOffset: {width: 0, height: 2},
-    elevation: 3,
-  },
-  containerLandscape: {
-    paddingVertical: theme.spacing[10],
-    flex: 8,
-  },
-  listContainer: {
-    flex: 1,
-    borderWidth: theme.borderWidth[2],
-    borderRadius: 4,
-    borderColor: theme.colors.grey,
-  },
-});

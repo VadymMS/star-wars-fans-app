@@ -1,13 +1,8 @@
-import React from 'react';
-import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
-import theme from '../../themes/theme';
+import React, {useMemo} from 'react';
+import {StyleProp, Text, TextStyle, View, ViewStyle} from 'react-native';
+import {useAppSelector} from '../../hooks/useStoreHooks';
+import {selectDarkTheme} from '../../redux/services/selects';
+import dynamicStyles from './styles';
 
 interface IErrorProps {
   style?: StyleProp<ViewStyle>;
@@ -16,23 +11,12 @@ interface IErrorProps {
 }
 
 export const ErrorComponent = ({style, textStyle, title}: IErrorProps) => {
+  const isDark = useAppSelector(selectDarkTheme);
+  const styles = useMemo(() => dynamicStyles({isDark}), [isDark]);
+
   return (
     <View style={[styles.container, style]}>
       <Text style={[styles.textStyle, textStyle]}>Error: {title}</Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theme.colors.grey,
-  },
-  textStyle: {
-    color: theme.colors.red,
-    fontSize: theme.fontSize.base,
-  },
-});

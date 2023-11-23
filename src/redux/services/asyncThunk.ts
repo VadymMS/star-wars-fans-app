@@ -3,15 +3,15 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import {IResponse} from '../../types/response';
 import {IFan} from '../../types/appState';
 import {v4 as uuidv4} from 'uuid';
-import storageService from '../../Services/storageService';
+import storageFansService from '../../Services/storageFansService';
 import {get} from '../../Services/fetch';
 
 export const loadFans = createAsyncThunk(
   'fans/getFans',
   async (url: string): Promise<IResponse> => {
     const fans = await get(url);
-    const favoriteFanNames = await storageService.getFavoriteFans();
-    const storageCounters = await storageService.getCounters();
+    const favoriteFanNames = await storageFansService.getFavoriteFans();
+    const storageCounters = await storageFansService.getCounters();
 
     fans.data.results = fans.data.results.map((fan: IFan) => {
       const id = uuidv4().slice(0, 8);

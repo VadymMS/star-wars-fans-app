@@ -47,6 +47,11 @@ export interface IFansState {
   counters: Array<ICounter>;
 }
 
+export interface IThemeState {
+  isDarkTheme: boolean;
+}
+
 export interface IStore {
   fans: IFansState;
+  theme: IThemeState;
 }

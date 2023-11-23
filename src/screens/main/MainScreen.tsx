@@ -1,6 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-  StyleSheet,
   SafeAreaView,
   View,
   Platform,
@@ -8,31 +7,33 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import theme from '../themes/theme';
 import {
   selectAllFans,
   selectCounters,
+  selectDarkTheme,
   selectLoading,
-} from '../redux/services/selects';
-import {useAppDispatch, useAppSelector} from '../hooks/useStoreHooks';
-import {CardList} from '../components/CardList/CardList';
-import {CounterList} from '../components/CounterList/CounterList';
-import {Header} from '../components/Header/Header';
-import {Loader} from '../components/Loader/Loader';
-import {filterElements} from '../helpers/filterElements';
-import {QueryParamsEnums} from '../types/enums/QueryEnums';
-import {loadFans} from '../redux/services/asyncThunk';
+} from '../../redux/services/selects';
+import {useAppDispatch, useAppSelector} from '../../hooks/useStoreHooks';
+import {CardList} from '../../components/CardList/CardList';
+import {CounterList} from '../../components/CounterList/CounterList';
+import {Header} from '../../components/Header/Header';
+import {Loader} from '../../components/Loader/Loader';
+import {filterElements} from '../../helpers/filterElements';
+import {QueryParamsEnums} from '../../types/enums/QueryEnums';
+import {loadFans} from '../../redux/services/asyncThunk';
 import {
   clearFans,
   toggleFavorite,
   toggleLoading,
-} from '../redux/slices/fansSlice';
-import {Nullable} from '../types/utility';
-import {useLandscape} from '../hooks/useLandscape';
-import {PaginationEnums} from '../types/enums/PaginationEnums';
-import storageService from '../Services/storageService';
-import {IFanInfo} from '../types/appState';
+} from '../../redux/slices/fansSlice';
+import {Nullable} from '../../types/utility';
+import {useLandscape} from '../../hooks/useLandscape';
+import {PaginationEnums} from '../../types/enums/PaginationEnums';
+import storageFansService from '../../Services/storageFansService';
+import {IFanInfo} from '../../types/appState';
 import {API_URL} from '@env';
+import dynamicStyles from './styles';
+import {NavigationType} from '../../types/navigation';
 
 export const MainScreen = () => {
   const [currentPageUrl, setCurrentPageUrl] = useState<string>(
@@ -48,8 +49,11 @@ export const MainScreen = () => {
   const allFans = useAppSelector(selectAllFans);
   const loading = useAppSelector(selectLoading);
   const counters = useAppSelector(selectCounters);
+  const isDark = useAppSelector(selectDarkTheme);
   const dispatch = useAppDispatch();
   const isLandscape = useLandscape();
+  const isHide = Platform.OS === 'ios' && isLandscape && isKeyboardShow;
+  const styles = useMemo(() => dynamicStyles({isDark}), [isDark]);
 
   useEffect(() => {
     dispatch(loadFans(currentPageUrl));
@@ -63,7 +67,6 @@ export const MainScreen = () => {
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
       setIsKeyboardShow(false);
     });
-
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
@@ -72,19 +75,19 @@ export const MainScreen = () => {
 
   const clearFansHandler = useCallback(() => {
     dispatch(clearFans());
-    storageService.clearStorage();
+    storageFansService.clearStorage();
   }, [dispatch]);
 
   const toggleFavoriteHandler = useCallback(
     (fanInfo: IFanInfo) => {
       dispatch(toggleFavorite(fanInfo));
-      storageService.updateStorage(fanInfo);
+      storageFansService.updateStorage(fanInfo);
     },
     [dispatch],
   );
 
   const navigationPageHandler = useCallback(
-    (direction: 'previous' | 'next', page: Nullable<string>) => {
+    (direction: NavigationType, page: Nullable<string>) => {
       const callback =
         direction === 'previous'
           ? (prev: number) => prev - PaginationEnums.step
@@ -98,8 +101,6 @@ export const MainScreen = () => {
     },
     [dispatch, setCurrentPageUrl, setStartNumberPage, setEndNumberPage],
   );
-
-  const isHide = Platform.OS === 'ios' && isLandscape && isKeyboardShow;
 
   return (
     <KeyboardAvoidingView
@@ -133,29 +134,3 @@ export const MainScreen = () => {
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  keyboardAvoidStyle: {
-    flex: 1,
-  },
-  safeAreaViewTopStyle: {
-    flex: 0,
-    backgroundColor: theme.colors.grey,
-  },
-  safeAreaViewStyle: {
-    flex: 1,
-    backgroundColor: theme.colors.grey,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: theme.colors.grey,
-    paddingVertical: theme.spacing[20],
-    paddingHorizontal: theme.spacing[16],
-  },
-  loaderStyle: {
-    flex: 13,
-    justifyContent: 'center',
-  },
-});

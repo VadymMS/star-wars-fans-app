@@ -56,11 +56,11 @@ const updateStorage = async ({name, type, favorite}: IFanInfo) => {
   storage.setItem(StorageKeys.counters, updateCounters);
 };
 
-const storageService = {
+const storageFansService = {
   getFavoriteFans,
   getCounters,
   clearStorage,
   updateStorage,
 };
 
-export default storageService;
+export default storageFansService;

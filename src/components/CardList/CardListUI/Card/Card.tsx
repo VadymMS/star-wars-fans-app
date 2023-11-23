@@ -1,21 +1,24 @@
 import React, {useCallback, useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {IFanInfo, IFan} from '../../../types/appState';
-import theme from '../../../themes/theme';
+import {Text, View} from 'react-native';
+import {IFanInfo, IFan} from '../../../../types/appState';
+import theme from '../../../../themes/theme';
 import {Button, ButtonIcon, FavouriteIcon} from '@gluestack-ui/themed';
-import {getId} from '../../../helpers/getId';
-import {Loader} from '../../Loader/Loader';
-import {ErrorComponent} from '../../ErrorComponent/ErrorComponent';
+import {getId} from '../../../../helpers/getId';
+import {Loader} from '../../../Loader/Loader';
+import {ErrorComponent} from '../../../ErrorComponent/ErrorComponent';
 import {TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {ScreenNavigationProp} from '../../../types/navigation';
+import {ScreenNavigationProp} from '../../../../types/navigation';
 import {
   useGetPlanetsQuery,
   useGetSpeciesQuery,
-} from '../../../redux/services/fansApi';
-import {useLandscape} from '../../../hooks/useLandscape';
+} from '../../../../redux/services/fansApi';
+import {useLandscape} from '../../../../hooks/useLandscape';
 import {useResponsiveSizes} from 'react-native-responsive-sizes';
-import {getCardWidth} from '../../../helpers/getCardWidth';
+import {getCardWidth} from '../../../../helpers/getCardWidth';
+import {useAppSelector} from '../../../../hooks/useStoreHooks';
+import {selectDarkTheme} from '../../../../redux/services/selects';
+import dynamicStyles from './styles';
 
 interface ICardProps {
   info: IFan;
@@ -23,10 +26,12 @@ interface ICardProps {
 }
 
 export const Card = ({info, onPress}: ICardProps) => {
+  const isDark = useAppSelector(selectDarkTheme);
   const navigation = useNavigation<ScreenNavigationProp>();
   const isLandscape = useLandscape();
+  const themeValue = isDark ? 'dark' : 'light';
+  const iconColor = isDark ? '$backgroundDark900' : '$white';
   const {width} = useResponsiveSizes();
-
   const {
     birth_year,
     name,
@@ -44,57 +49,57 @@ export const Card = ({info, onPress}: ICardProps) => {
     vehicles,
   } = info;
 
-  const homewoldId = useMemo(() => getId(homeworldUrl), [homeworldUrl]);
-  const speciesdId = useMemo(() => getId(speciesUrl), [speciesUrl]);
+  const homeworldId = useMemo(() => getId(homeworldUrl), [homeworldUrl]);
+  const specieId = useMemo(() => getId(speciesUrl), [speciesUrl]);
 
   const {
     data: homeworld,
     error: homeworldError,
     isLoading: isLoadingHomeworld,
-  } = useGetPlanetsQuery(homewoldId);
-
+  } = useGetPlanetsQuery(homeworldId);
   const {
-    data: species,
-    error: speciesError,
-    isLoading: isLoadingSpecies,
-  } = useGetSpeciesQuery(speciesdId);
+    data: specie,
+    error: specieError,
+    isLoading: isLoadingSpecie,
+  } = useGetSpeciesQuery(specieId);
+
+  const cardData = [
+    favorite,
+    name,
+    birth_year,
+    gender,
+    homeworld?.name || '',
+    specie?.name || '',
+  ];
 
   const getWidth = useCallback(
     (index: number) => getCardWidth({index, isLandscape, width}),
     [isLandscape, width],
   );
 
-  if (homeworldError || speciesError) {
+  const styles = useMemo(
+    () => dynamicStyles({isDark, isLandscape}),
+    [isDark, isLandscape],
+  );
+
+  if (homeworldError || specieError) {
     return (
       <ErrorComponent
         title="Something went wrong!"
-        style={[styles.container, isLandscape && styles.containerLandscape]}
+        style={styles.container}
         textStyle={[styles.textStyle, styles.textErrorStyle]}
       />
     );
   }
 
-  if (isLoadingHomeworld || isLoadingSpecies) {
+  if (isLoadingHomeworld || isLoadingSpecie) {
     return (
       <Loader
-        style={[
-          styles.container,
-          styles.loaderStyle,
-          isLandscape && styles.containerLandscape,
-        ]}
+        style={[styles.container, styles.loaderStyle]}
         size={isLandscape ? 'small' : 'large'}
       />
     );
   }
-
-  const infoArr = [
-    favorite,
-    name,
-    birth_year,
-    gender,
-    homeworld?.name || '',
-    species?.name || '',
-  ];
 
   return (
     <TouchableOpacity
@@ -112,14 +117,8 @@ export const Card = ({info, onPress}: ICardProps) => {
         })
       }>
       <View
-        style={[
-          styles.container,
-          isLandscape && {
-            ...styles.containerLandscape,
-            ...styles.cardWidthLandscape,
-          },
-        ]}>
-        {infoArr.map((infoItem, index) => {
+        style={[styles.container, isLandscape && styles.cardWidthLandscape]}>
+        {cardData.map((infoItem, index) => {
           return (
             <View style={{width: getWidth(index)}} key={index.toString()}>
               {typeof infoItem === 'boolean' ? (
@@ -130,12 +129,12 @@ export const Card = ({info, onPress}: ICardProps) => {
                   size="sm"
                   p="$0"
                   width={1}
-                  bg={theme.colors.white}>
+                  bg={theme.colors[themeValue]?.white}>
                   <ButtonIcon
                     as={FavouriteIcon}
                     size="sm"
                     color="$red500"
-                    fill={infoItem ? '$red500' : '$white'}
+                    fill={infoItem ? '$red500' : iconColor}
                   />
                 </Button>
               ) : (
@@ -148,36 +147,3 @@ export const Card = ({info, onPress}: ICardProps) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    maxHeight: 52,
-    minHeight: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: theme.colors.white,
-  },
-  containerLandscape: {
-    maxHeight: 42,
-    minHeight: 42,
-  },
-  cardWidthLandscape: {
-    width: '50%',
-  },
-  textStyle: {
-    lineHeight: 13,
-    paddingHorizontal: theme.spacing[10],
-    fontFamily: theme.fonts.interLight,
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.normal,
-    color: theme.colors.black,
-  },
-  loaderStyle: {
-    justifyContent: 'center',
-  },
-  textErrorStyle: {
-    color: theme.colors.red,
-  },
-});

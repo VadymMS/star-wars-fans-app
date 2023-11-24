@@ -1,5 +1,5 @@
 import {StyleSheet, Platform} from 'react-native';
-import theme from '../../themes/theme';
+import theme from '../../theme/theme';
 import {IStylesOptions} from '../../types/theme';
 
 const dynamicStyles = ({isDark, isLandscape}: IStylesOptions = {}) => {

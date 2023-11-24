@@ -1,6 +1,6 @@
 import React, {memo, useMemo} from 'react';
 import {Text, View} from 'react-native';
-import theme from '../../themes/theme';
+import theme from '../../theme/theme';
 import {Button, ButtonText} from '@gluestack-ui/themed';
 import {useLandscape} from '../../hooks/useLandscape';
 import {useAppSelector} from '../../hooks/useStoreHooks';

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -35,7 +35,7 @@ import {API_URL} from '@env';
 import dynamicStyles from './styles';
 import {NavigationType} from '../../types/navigation';
 
-export const MainScreen = () => {
+export const MainScreen = memo(() => {
   const [currentPageUrl, setCurrentPageUrl] = useState<string>(
     `${API_URL}/${QueryParamsEnums.people}`,
   );
@@ -133,4 +133,4 @@ export const MainScreen = () => {
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
-};
+});

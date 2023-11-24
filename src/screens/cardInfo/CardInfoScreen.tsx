@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useMemo} from 'react';
+import React, {memo, useMemo} from 'react';
 import {SafeAreaView, ScrollView, Text, View} from 'react-native';
-import {RootStackParamList} from '../../types/navigation';
+import {RootStackParamList, ScreenNavigationProp} from '../../types/navigation';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {getId} from '../../helpers/getId';
 import {BackButton} from '../../components/BackButton/BackButton';
@@ -15,7 +15,7 @@ import dynamicStyles from './styles';
 
 type CardInfoProps = NativeStackScreenProps<RootStackParamList, 'CardInfo'>;
 
-export const CardInfoScreen = ({route}: CardInfoProps) => {
+export const CardInfoScreen = memo(({route}: CardInfoProps) => {
   const {
     name,
     eye_color,
@@ -28,7 +28,7 @@ export const CardInfoScreen = ({route}: CardInfoProps) => {
     vehicles,
   } = route.params;
   const isDark = useAppSelector(selectDarkTheme);
-  const navigation = useNavigation();
+  const navigation = useNavigation<ScreenNavigationProp>();
   const isLandscape = useLandscape();
   const filmsId = useMemo(() => films.map(filmUrl => getId(filmUrl)), [films]);
   const starshipsId = useMemo(
@@ -81,4 +81,4 @@ export const CardInfoScreen = ({route}: CardInfoProps) => {
       </SafeAreaView>
     </>
   );
-};
+});

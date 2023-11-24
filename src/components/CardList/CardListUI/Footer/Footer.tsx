@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {Text, View} from 'react-native';
-import theme from '../../../../themes/theme';
+import theme from '../../../../theme/theme';
 import {
   Button,
   ButtonIcon,

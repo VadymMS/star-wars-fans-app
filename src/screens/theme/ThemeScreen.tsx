@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, {memo, useCallback, useEffect, useMemo} from 'react';
 import {
   SafeAreaView,
   View,
@@ -7,11 +7,11 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import theme from '../../themes/theme';
+import theme from '../../theme/theme';
 import {Switch} from '@gluestack-ui/themed';
 import {StorageKeys} from '../../types/enums/AsyncStorageEnums';
 import storage from '../../Services/storage';
-import Logo from '../../assets/logo.svg';
+import Logo from '../../assets/images/logo.svg';
 import {useNavigation} from '@react-navigation/native';
 import {useLandscape} from '../../hooks/useLandscape';
 import {ScreenNavigationProp} from '../../types/navigation';
@@ -21,10 +21,8 @@ import {setDarkTheme} from '../../redux/slices/themeSlice';
 import {useResponsiveSizes} from 'react-native-responsive-sizes';
 import dynamicStyles from './styles';
 
-export const ThemeScreen = () => {
+export const ThemeScreen = memo(() => {
   const isDark = useAppSelector(selectDarkTheme);
-  const lightSideIcon = require('../../assets/icon-btn-light.png');
-  const DarkSideIcon = require('../../assets/icon-btn-dark.png');
   const navigation = useNavigation<ScreenNavigationProp>();
   const dispatch = useAppDispatch();
   const isLandscape = useLandscape();
@@ -64,9 +62,12 @@ export const ThemeScreen = () => {
             onPress={() => navigation.navigate('Main')}>
             <View style={styles.imageWrapper}>
               {isDark ? (
-                <Image source={DarkSideIcon} style={styles.image} />
+                <Image source={theme.icons.darkSideIcon} style={styles.image} />
               ) : (
-                <Image source={lightSideIcon} style={styles.image} />
+                <Image
+                  source={theme.icons.lightSideIcon}
+                  style={styles.image}
+                />
               )}
             </View>
             <Text style={styles.imageLabel}>Push on me!</Text>
@@ -93,4 +94,4 @@ export const ThemeScreen = () => {
       </SafeAreaView>
     </>
   );
-};
+});

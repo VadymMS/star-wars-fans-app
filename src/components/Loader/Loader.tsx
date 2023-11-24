@@ -3,7 +3,7 @@ import {View, StyleProp, ViewStyle} from 'react-native';
 import {ActivityIndicator} from 'react-native';
 import {useAppSelector} from '../../hooks/useStoreHooks';
 import {selectDarkTheme} from '../../redux/services/selects';
-import theme from '../../themes/theme';
+import theme from '../../theme/theme';
 import dynamicStyles from './styles';
 
 interface ILoaderProps {

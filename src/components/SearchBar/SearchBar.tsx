@@ -10,7 +10,7 @@ import {Platform} from 'react-native';
 import {useLandscape} from '../../hooks/useLandscape';
 import {useAppSelector} from '../../hooks/useStoreHooks';
 import {selectDarkTheme} from '../../redux/services/selects';
-import theme from '../../themes/theme';
+import theme from '../../theme/theme';
 
 interface ISearchBarProps {
   onChangeText: (value: string) => void;

@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {IStylesOptions} from '../../types/theme';
-import theme from '../../themes/theme';
+import theme from '../../theme/theme';
 
 const dynamicStyles = ({isLandscape}: IStylesOptions = {}) => {
   return StyleSheet.create({

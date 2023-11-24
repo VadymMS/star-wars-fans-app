@@ -107,4 +107,8 @@ export default {
     75: 0.75,
     100: 1,
   },
+  icons: {
+    lightSideIcon: require('../assets/icons/icon-btn-light.png'),
+    darkSideIcon: require('../assets/icons/icon-btn-dark.png'),
+  },
 };

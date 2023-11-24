@@ -1,15 +1,16 @@
 import {StyleSheet} from 'react-native';
 import {IStylesOptions} from '../../../../types/theme';
-import theme from '../../../../themes/theme';
+import theme from '../../../../theme/theme';
 
 const dynamicStyles = ({isDark, isLandscape}: IStylesOptions = {}) => {
   const themeValue = isDark ? 'dark' : 'light';
+  const height = isLandscape ? 42 : 52;
 
   return StyleSheet.create({
     container: {
       width: '100%',
-      maxHeight: isLandscape ? 42 : 52,
-      minHeight: isLandscape ? 42 : 52,
+      maxHeight: height,
+      minHeight: height,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',

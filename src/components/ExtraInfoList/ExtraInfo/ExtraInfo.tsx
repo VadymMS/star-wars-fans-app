@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {Text, View} from 'react-native';
 import {QueryParamsEnums} from '../../../types/enums/QueryEnums';
-import theme from '../../../themes/theme';
+import theme from '../../../theme/theme';
 import {ErrorComponent} from '../../ErrorComponent/ErrorComponent';
 import {Loader} from '../../Loader/Loader';
 import {

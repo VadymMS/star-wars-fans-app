@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo} from 'react';
 import {Text, View} from 'react-native';
 import {IFanInfo, IFan} from '../../../../types/appState';
-import theme from '../../../../themes/theme';
+import theme from '../../../../theme/theme';
 import {Button, ButtonIcon, FavouriteIcon} from '@gluestack-ui/themed';
 import {getId} from '../../../../helpers/getId';
 import {Loader} from '../../../Loader/Loader';
@@ -94,10 +94,7 @@ export const Card = ({info, onPress}: ICardProps) => {
 
   if (isLoadingHomeworld || isLoadingSpecie) {
     return (
-      <Loader
-        style={[styles.container, styles.loaderStyle]}
-        size={isLandscape ? 'small' : 'large'}
-      />
+      <Loader style={[styles.container, styles.loaderStyle]} size="small" />
     );
   }
 

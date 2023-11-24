@@ -1,5 +1,5 @@
 import {useFonts} from 'expo-font';
-import theme from '../themes/theme';
+import theme from '../theme/theme';
 
 export const useLoadFonts = (): boolean => {
   const {fonts} = theme;

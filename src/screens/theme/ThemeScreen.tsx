@@ -6,6 +6,7 @@ import {
   Platform,
   Image,
   Pressable,
+  StatusBar,
 } from 'react-native';
 import theme from '../../theme/theme';
 import {Switch} from '@gluestack-ui/themed';
@@ -50,6 +51,10 @@ export const ThemeScreen = memo(() => {
     <>
       <SafeAreaView style={styles.safeAreaViewTopStyle} />
       <SafeAreaView style={styles.safeAreaViewStyle}>
+        <StatusBar
+          backgroundColor={theme.colors[themeValue].commonBlack}
+          barStyle="light-content"
+        />
         <View style={styles.container}>
           <View style={styles.logoContainer}>
             <Logo
